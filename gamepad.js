@@ -30,12 +30,19 @@ window.addEventListener("gamepaddisconnected", function(e) { gamepadHandler(e, f
 // Use an interval because requestAnimationFrame steps over the stuff already in place in kart
 // There must be some way i can merge rAF into kart later.
 var interval = setInterval(pollGamepads, 500);
+
 var gamepadInfo, ball;
-var a = 0,
-    b = 0;
+var a = false,
+    b = false,
+    x = false,
+    y = false,
+    left = false,
+    right = false,
+    up = false,
+    down = false;
 
 function pollGamepads() {
-  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+  var gamepads = navigator.getGamepads();
   for (var i = 0; i < gamepads.length; i++) {
     var gp = gamepads[i];
     if(gp) {
@@ -54,19 +61,19 @@ function buttonPressed(b) {
 }
 
 function gameLoop() {
-  var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+  var gamepads = navigator.getGamepads()
   if (!gamepads)
     return;
 
   var gp = gamepads[0];
-  if (buttonPressed(gp.buttons[0])) {
-    b--;
-  } else if (buttonPressed(gp.buttons[2])) {
-    b++;
-  }
-  if(buttonPressed(gp.buttons[1])) {
-    a++;
-  } else if(buttonPressed(gp.buttons[3])) {
-    a--;
-  }
-};
+  a = buttonPressed(gp.buttons[0])
+  b = buttonPressed(gp.buttons[1])
+  x = buttonPressed(gp.buttons[2])
+  y = buttonPressed(gp.buttons[3])
+  up = buttonPressed(gp.buttons[12])
+  down = buttonPressed(gp.buttons[13])
+  left = buttonPressed(gp.buttons[14])
+  right = buttonPressed(gp.buttons[15])
+
+  setTimeout(gameLoop, 500)
+}
