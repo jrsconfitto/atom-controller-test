@@ -1,31 +1,50 @@
-var rx = require('rx');
+// Here's the thing...
+var Rx = require('rx');
 
-window.addEventListener("gamepadconnected", function(e) {
-  console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-  e.gamepad.index, e.gamepad.id,
-  e.gamepad.buttons.length, e.gamepad.axes.length);
-});
+// An array of valid gamepads
+var gamepads = [];
 
-window.addEventListener("gamepaddisconnected", function(e) {
-  console.log("Gamepad disconnected from index %d: %s",
-  e.gamepad.index, e.gamepad.id);
-});
-var gamepads = {};
+// Connect/Disconnect
+var gamepadConnected = Rx.Observable.fromEvent(window, 'gamepadconnected');
+var gamepadDisconnected = Rx.Observable.fromEvent(window, 'gamepaddisconnected');
+
+var gamepadOnSub = gamepadConnected.subscribe(
+    function (e) {
+      console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index, e.gamepad.id,
+        e.gamepad.buttons.length, e.gamepad.axes.length);
+
+      if(e.gamepad) {
+        gamepadHandler(e, true);
+      }
+    },
+    function (err) {
+        console.log('Error: ' + err);
+    },
+    function () {
+        console.log('Completed');
+    });
+
+var gamepadDisSub = gamepadDisconnected.subscribe(
+  function(e) {
+    console.log("Gamepad disconnected from index %d: %s",
+    e.gamepad.index, e.gamepad.id);
+    gamepadHandler(e, false);
+  });
 
 function gamepadHandler(event, connecting) {
   var gamepad = event.gamepad;
+
   // Note:
   // gamepad === navigator.getGamepads()[gamepad.index]
-
   if (connecting) {
-    gamepads[gamepad.index] = gamepad;
+    gamepads.forEach(function(gp) {
+      gamepads[gamepad.index] = gamepad;
+    });
   } else {
     delete gamepads[gamepad.index];
   }
 }
-
-window.addEventListener("gamepadconnected", function(e) { gamepadHandler(e, true); }, false);
-window.addEventListener("gamepaddisconnected", function(e) { gamepadHandler(e, false); }, false);
 
 // Use an interval because requestAnimationFrame steps over the stuff already in place in kart
 // There must be some way i can merge rAF into kart later.
