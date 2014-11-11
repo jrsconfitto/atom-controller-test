@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "main": "main.js",
   "dependencies": {
+    "fs-plus": "^2.3.1",
+    "fs.notify": "0.0.4",
     "rx": "^2.3.14"
   }
 }

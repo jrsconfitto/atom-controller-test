@@ -1,5 +1,6 @@
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
+var LiveReload = require('./livereload');
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -32,4 +33,8 @@ app.on('ready', function() {
   });
 
   mainWindow.toggleDevTools();
+
+  // console.log("creating livereload with " + __dirname)
+  // var lr = new LiveReload(__dirname);
+  // lr.attach();
 });
